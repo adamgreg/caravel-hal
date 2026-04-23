@@ -9,13 +9,16 @@ license = "MIT"
 edition = "2024"
 
 [dependencies]
-caravel-pac = "^1.0.0"
+caravel-pac = "^1.0.3"
 critical-section = "^1.2.0"
 embedded-hal = "^1.0.0"
 embedded-io = "^0.6.1"
 riscv = { version = "^0.15.0", features = ["critical-section-single-hart"] }
 riscv-rt = { version = "^0.16.0", features = ["single-hart"] }
 vexriscv = "^0.0.3"
+
+[dev-dependencies]
+caravel-pac = { version = "^1.0.3", features = ["mock-registers"] }
 
 [features]
 default = ["riscv-rt/device"]
