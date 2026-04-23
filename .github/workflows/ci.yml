@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    name: Check and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: riscv32i-unknown-none-elf
+          components: clippy, rustfmt
+      - name: Cargo Check
+        run: cargo check --verbose
+      - name: Lint
+        run: cargo clippy -- -D warnings
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Test
+        # Tests compile for the host, so override the target
+        run: cargo test --target x86_64-unknown-linux-gnu
