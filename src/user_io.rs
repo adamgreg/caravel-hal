@@ -1,9 +1,8 @@
 use embedded_hal::digital::{ErrorType, InputPin, OutputPin};
 
-use caravel_pac::{
-    UserProjectRegisters,
-    bitfields::{UserIOBits, UserIoXferBits},
-};
+use caravel_pac::{UserProjectRegisters, bitfields::UserIoXferBits};
+
+pub use caravel_pac::bitfields::UserIOBits;
 
 /// Driver for a single Caravel user I/O pin
 pub struct UserIoPin {
@@ -146,10 +145,12 @@ impl UserIo {
     /// by calling `xfer()`.
     ///
     /// Example:
-    /// ```rust
+    /// ```no_run
+    /// use caravel_hal::UserIo;
+    ///
     /// let user_io = UserIo::configure()
-    ///     .pin(1, UserIOBits::USER_STD_OUTPUT)
-    ///     .pin(5, UserIOBits::USER_STD_INPUT_NOPULL)
+    ///     .pin(1, UserIo::USER_STD_OUTPUT)
+    ///     .pin(5, UserIo::USER_STD_INPUT_NOPULL)
     ///     .xfer();
     /// ```
     pub const fn configure() -> UserIoBuilder {
@@ -168,7 +169,7 @@ impl UserIo {
     /// Runtime pin access
     #[inline]
     pub fn pin_checked(&mut self, n: usize) -> Option<UserIoPin> {
-        (n < 38).then(|| UserIoPin { regs: self.regs, n })
+        (n < 38).then_some(UserIoPin { regs: self.regs, n })
     }
 
     /// Transfer the full user I/O configuration to the actual I/O pads
@@ -181,4 +182,24 @@ impl UserIo {
         // Wait for transfer to complete
         while self.regs.xfer.read().xfer_busy() {}
     }
+}
+
+// Make standard UserIOBits configurations available as associated constants for convenience
+impl UserIo {
+    pub const MGMT_STD_INPUT_NOPULL: UserIOBits = UserIOBits::MGMT_STD_INPUT_NOPULL;
+    pub const MGMT_STD_INPUT_PULLDOWN: UserIOBits = UserIOBits::MGMT_STD_INPUT_PULLDOWN;
+    pub const MGMT_STD_INPUT_PULLUP: UserIOBits = UserIOBits::MGMT_STD_INPUT_PULLUP;
+    pub const MGMT_STD_OUTPUT: UserIOBits = UserIOBits::MGMT_STD_OUTPUT;
+    pub const MGMT_STD_BIDIRECTIONAL: UserIOBits = UserIOBits::MGMT_STD_BIDIRECTIONAL;
+    pub const MGMT_STD_OUT_MONITORED: UserIOBits = UserIOBits::MGMT_STD_OUT_MONITORED;
+    pub const MGMT_STD_ANALOG: UserIOBits = UserIOBits::MGMT_STD_ANALOG;
+
+    // User interface standard modes
+    pub const USER_STD_INPUT_NOPULL: UserIOBits = UserIOBits::USER_STD_INPUT_NOPULL;
+    pub const USER_STD_INPUT_PULLDOWN: UserIOBits = UserIOBits::USER_STD_INPUT_PULLDOWN;
+    pub const USER_STD_INPUT_PULLUP: UserIOBits = UserIOBits::USER_STD_INPUT_PULLUP;
+    pub const USER_STD_OUTPUT: UserIOBits = UserIOBits::USER_STD_OUTPUT;
+    pub const USER_STD_BIDIRECTIONAL: UserIOBits = UserIOBits::USER_STD_BIDIRECTIONAL;
+    pub const USER_STD_OUT_MONITORED: UserIOBits = UserIOBits::USER_STD_OUT_MONITORED;
+    pub const USER_STD_ANALOG: UserIOBits = UserIOBits::USER_STD_ANALOG;
 }
