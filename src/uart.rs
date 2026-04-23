@@ -8,6 +8,7 @@ pub struct Uart {
 unsafe impl Send for Uart {}
 
 impl Uart {
+    #[allow(clippy::new_without_default)]
     pub fn new(enable: &UartEnabledOutRegister) -> Self {
         let this = Self {
             regs: UartRegisters::new(),

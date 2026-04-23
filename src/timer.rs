@@ -14,6 +14,7 @@ impl Timer0 {
     /// Constructs the Timer0 driver.
     /// `ticks_per_s` should be the clock speed of the core, in Hertz
     #[inline]
+    #[allow(clippy::new_without_default)]
     pub const fn new(ticks_per_s: u32) -> Self {
         // Precompute fixed-point conversion factor
         Self {
@@ -44,7 +45,7 @@ impl Timer0 {
 
     /// Set the timer to fire periodically
     #[inline(always)]
-    pub fn set_periodic(&mut self, period_ns: u32) -> () {
+    pub fn set_periodic(&mut self, period_ns: u32) {
         // Fast 32-bit fixed-point multiply: (ns * factor) >> 32
         let ticks = ((period_ns as u64 * self.ns_to_ticks_factor) >> 32) as u32;
 

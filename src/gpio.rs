@@ -10,6 +10,7 @@ pub struct Gpio {
 unsafe impl Send for Gpio {}
 
 impl Gpio {
+    #[allow(clippy::new_without_default)]
     pub const fn new() -> Self {
         Self {
             regs: GpioRegisters::new(),
