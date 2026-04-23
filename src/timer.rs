@@ -3,7 +3,7 @@ use embedded_hal::delay::DelayNs;
 use caravel_pac::{CaravelInterrupt, Timer0Registers};
 
 pub struct Timer0 {
-    regs: *const Timer0Registers,
+    regs: &'static Timer0Registers,
     /// Precomputed factor: ticks per nanosecond * 2^32 for fixed-point maths
     ns_to_ticks_factor: u64,
 }
@@ -14,17 +14,12 @@ impl Timer0 {
     /// Constructs the Timer0 driver.
     /// `ticks_per_s` should be the clock speed of the core, in Hertz
     #[inline]
-    pub const fn new(regs: &Timer0Registers, ticks_per_s: u32) -> Self {
+    pub const fn new(ticks_per_s: u32) -> Self {
         // Precompute fixed-point conversion factor
         Self {
-            regs,
+            regs: Timer0Registers::new(),
             ns_to_ticks_factor: ((ticks_per_s as u64) << 32) / 1_000_000_000,
         }
-    }
-
-    #[inline(always)]
-    fn regs(&self) -> &Timer0Registers {
-        unsafe { &*self.regs }
     }
 
     /// Enable the Timer0 interrupt source
@@ -33,7 +28,7 @@ impl Timer0 {
     pub fn enable_interrupt(&mut self) {
         unsafe {
             riscv::interrupt::enable_interrupt(riscv::interrupt::Interrupt::MachineExternal);
-            self.regs().ev_enable.modify(|x| x.with_zero(true));
+            self.regs.ev_enable.modify(|x| x.with_zero(true));
         }
         CaravelInterrupt::Timer0.enable();
     }
@@ -42,7 +37,7 @@ impl Timer0 {
     #[inline(always)]
     pub fn disable_interrupt(&mut self) {
         unsafe {
-            self.regs().ev_enable.modify(|x| x.with_zero(false));
+            self.regs.ev_enable.modify(|x| x.with_zero(false));
         }
         CaravelInterrupt::Timer0.disable();
     }
@@ -55,10 +50,10 @@ impl Timer0 {
 
         unsafe {
             // Configure timer for periodic operation
-            self.regs().en.write(0);
-            self.regs().load.write(ticks);
-            self.regs().reload.write(ticks);
-            self.regs().en.write(1);
+            self.regs.en.write(0);
+            self.regs.load.write(ticks);
+            self.regs.reload.write(ticks);
+            self.regs.en.write(1);
         }
     }
 
@@ -66,21 +61,21 @@ impl Timer0 {
     #[inline(always)]
     pub fn disable(&mut self) {
         unsafe {
-            self.regs().en.write(0);
+            self.regs.en.write(0);
         }
     }
 
     /// Check for a pending event
     #[inline(always)]
     pub fn event_pending(&self) -> bool {
-        self.regs().ev_pending.read().zero()
+        self.regs.ev_pending.read().zero()
     }
 
     /// Clear the pending event flag
     #[inline(always)]
     pub fn clear_event(&self) {
         unsafe {
-            self.regs().ev_pending.modify(|x| x.with_zero(true));
+            self.regs.ev_pending.modify(|x| x.with_zero(true));
         }
     }
 }
@@ -93,14 +88,14 @@ impl DelayNs for Timer0 {
 
         unsafe {
             // Configure timer for a single-shot countdown
-            self.regs().en.write(0);
-            self.regs().load.write(ticks);
-            self.regs().en.write(1);
+            self.regs.en.write(0);
+            self.regs.load.write(ticks);
+            self.regs.en.write(1);
 
             // Loop, waiting for value to reach zero
-            self.regs().update_value.write(1);
-            while self.regs().value.read() > 0 {
-                self.regs().update_value.write(1);
+            self.regs.update_value.write(1);
+            while self.regs.value.read() > 0 {
+                self.regs.update_value.write(1);
             }
         }
     }

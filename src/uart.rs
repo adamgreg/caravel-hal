@@ -2,14 +2,16 @@ use caravel_pac::{UartEnabledOutRegister, UartRegisters};
 use embedded_io::{ErrorType, Read, Write};
 
 pub struct Uart {
-    regs: *const UartRegisters,
+    regs: &'static UartRegisters,
 }
 
 unsafe impl Send for Uart {}
 
 impl Uart {
-    pub fn new(regs: &UartRegisters, enable: &UartEnabledOutRegister) -> Self {
-        let this = Self { regs };
+    pub fn new(enable: &UartEnabledOutRegister) -> Self {
+        let this = Self {
+            regs: UartRegisters::new(),
+        };
         // Enable the UART
         unsafe {
             enable.value.write(1); // Enable bit
@@ -17,28 +19,23 @@ impl Uart {
         this
     }
 
-    #[inline(always)]
-    fn regs(&self) -> &UartRegisters {
-        unsafe { &*self.regs }
-    }
-
     /// Non-blocking check: returns true if data is available to read
     #[inline(always)]
     pub fn rx_ready(&self) -> bool {
-        self.regs().rxempty.read() == 0 // Ready when NOT empty
+        self.regs.rxempty.read() == 0 // Ready when NOT empty
     }
 
     /// Non-blocking check: returns true if space is available to write
     #[inline(always)]
     pub fn tx_ready(&self) -> bool {
-        self.regs().txfull.read() == 0
+        self.regs.txfull.read() == 0
     }
 
     /// Enable/disable the TX event
     #[inline(always)]
     pub fn tx_event_enable(&self, enable: bool) {
         unsafe {
-            self.regs().ev_enable.modify(|x| x.with_tx(enable));
+            self.regs.ev_enable.modify(|x| x.with_tx(enable));
         }
     }
 
@@ -46,35 +43,35 @@ impl Uart {
     #[inline(always)]
     pub fn rx_event_enable(&self, enable: bool) {
         unsafe {
-            self.regs().ev_enable.modify(|x| x.with_rx(enable));
+            self.regs.ev_enable.modify(|x| x.with_rx(enable));
         }
     }
 
     /// Check for a pending RX event
     #[inline(always)]
     pub fn rx_event_pending(&self) -> bool {
-        self.regs().ev_pending.read().rx()
+        self.regs.ev_pending.read().rx()
     }
 
     /// Clear the RX event flag
     #[inline(always)]
     pub fn clear_rx_event(&self) {
         unsafe {
-            self.regs().ev_pending.modify(|x| x.with_rx(true));
+            self.regs.ev_pending.modify(|x| x.with_rx(true));
         }
     }
 
     /// Check for a pending TX event
     #[inline(always)]
     pub fn tx_event_pending(&self) -> bool {
-        self.regs().ev_pending.read().tx()
+        self.regs.ev_pending.read().tx()
     }
 
     /// Clear the TX event flag
     #[inline(always)]
     pub fn clear_tx_event(&self) {
         unsafe {
-            self.regs().ev_pending.modify(|x| x.with_tx(true));
+            self.regs.ev_pending.modify(|x| x.with_tx(true));
         }
     }
 }
@@ -100,11 +97,11 @@ impl Read for Uart {
 
         loop {
             // Read the byte
-            buf[n] = self.regs().rxtx.read() as u8;
+            buf[n] = self.regs.rxtx.read() as u8;
 
             // Clear the RX event pending flag
             unsafe {
-                self.regs().ev_pending.modify(|x| x.with_rx(true));
+                self.regs.ev_pending.modify(|x| x.with_rx(true));
             }
 
             // Break the loop and return if no more data is available or buffer is full
@@ -134,7 +131,7 @@ impl Write for Uart {
                 break;
             }
             unsafe {
-                self.regs().rxtx.write(byte as u32);
+                self.regs.rxtx.write(byte as u32);
             }
             n += 1;
         }

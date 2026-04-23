@@ -7,7 +7,7 @@ use caravel_pac::{
 
 /// Driver for a single Caravel user I/O pin
 pub struct UserIoPin {
-    regs: *const UserProjectRegisters,
+    regs: &'static UserProjectRegisters,
     /// The pin number (0 to 37)
     pub n: usize,
 }
@@ -15,15 +15,6 @@ pub struct UserIoPin {
 unsafe impl Send for UserIoPin {}
 
 impl UserIoPin {
-    pub const fn new(regs: &UserProjectRegisters, n: usize) -> Self {
-        Self { regs, n }
-    }
-
-    #[inline(always)]
-    fn regs(&self) -> &UserProjectRegisters {
-        unsafe { &*self.regs }
-    }
-
     /// Modify the pin's configuration using a closure.
     ///
     /// The closure is passed a `UserIOBits`
@@ -33,7 +24,7 @@ impl UserIoPin {
     #[inline]
     pub fn configure(&mut self, f: impl FnOnce(UserIOBits) -> UserIOBits) {
         unsafe {
-            self.regs().io[self.n].modify(f);
+            self.regs.io[self.n].modify(f);
         }
     }
 
@@ -57,11 +48,11 @@ impl OutputPin for UserIoPin {
     fn set_low(&mut self) -> Result<(), Self::Error> {
         if self.n < 32 {
             unsafe {
-                self.regs().datal.modify(|x| x & !(1 << self.n));
+                self.regs.datal.modify(|x| x & !(1 << self.n));
             }
         } else {
             unsafe {
-                self.regs().datah.modify(|x| x & !(1 << (self.n - 32)));
+                self.regs.datah.modify(|x| x & !(1 << (self.n - 32)));
             }
         }
         Ok(())
@@ -71,11 +62,11 @@ impl OutputPin for UserIoPin {
     fn set_high(&mut self) -> Result<(), Self::Error> {
         if self.n < 32 {
             unsafe {
-                self.regs().datal.modify(|x| x | (1 << self.n));
+                self.regs.datal.modify(|x| x | (1 << self.n));
             }
         } else {
             unsafe {
-                self.regs().datah.modify(|x| x | (1 << (self.n - 32)));
+                self.regs.datah.modify(|x| x | (1 << (self.n - 32)));
             }
         }
         Ok(())
@@ -86,9 +77,9 @@ impl InputPin for UserIoPin {
     #[inline]
     fn is_high(&mut self) -> Result<bool, Self::Error> {
         Ok(if self.n < 32 {
-            (self.regs().datal.read() >> self.n) & 1 != 0
+            (self.regs.datal.read() >> self.n) & 1 != 0
         } else {
-            (self.regs().datah.read() >> (self.n - 32)) & 1 != 0
+            (self.regs.datah.read() >> (self.n - 32)) & 1 != 0
         })
     }
 
@@ -99,15 +90,15 @@ impl InputPin for UserIoPin {
 }
 
 /// Builder for configuring Caravel user I/O pins
-pub struct UserIoBuilder<'a> {
-    regs: &'a UserProjectRegisters,
+pub struct UserIoBuilder {
+    regs: &'static UserProjectRegisters,
     config: [UserIOBits; 38],
 }
 
-impl<'a> UserIoBuilder<'a> {
-    const fn new(regs: &'a UserProjectRegisters) -> Self {
+impl UserIoBuilder {
+    const fn new() -> Self {
         Self {
-            regs,
+            regs: UserProjectRegisters::new(),
             config: const {
                 let mut arr = [UserIOBits::MGMT_STD_INPUT_NOPULL; 38];
                 // Set custom values for first 2 pins
@@ -142,7 +133,7 @@ impl<'a> UserIoBuilder<'a> {
 
 /// Container for the full set of Caravel user I/O pins
 pub struct UserIo {
-    regs: *const UserProjectRegisters,
+    regs: &'static UserProjectRegisters,
 }
 
 unsafe impl Send for UserIo {}
@@ -156,18 +147,13 @@ impl UserIo {
     ///
     /// Example:
     /// ```rust
-    /// let user_io = UserIo::configure(regs)
+    /// let user_io = UserIo::configure()
     ///     .pin(1, UserIOBits::USER_STD_OUTPUT)
     ///     .pin(5, UserIOBits::USER_STD_INPUT_NOPULL)
     ///     .xfer();
     /// ```
-    pub const fn configure<'a>(regs: &'a UserProjectRegisters) -> UserIoBuilder<'a> {
-        UserIoBuilder::new(regs)
-    }
-
-    #[inline(always)]
-    fn regs(&self) -> &UserProjectRegisters {
-        unsafe { &*self.regs }
+    pub const fn configure() -> UserIoBuilder {
+        UserIoBuilder::new()
     }
 
     /// Compile-time pin access
@@ -188,11 +174,11 @@ impl UserIo {
     /// Transfer the full user I/O configuration to the actual I/O pads
     pub fn transfer(&mut self) {
         unsafe {
-            self.regs()
+            self.regs
                 .xfer
                 .write(UserIoXferBits::new().with_xfer_busy(true));
         }
         // Wait for transfer to complete
-        while self.regs().xfer.read().xfer_busy() {}
+        while self.regs.xfer.read().xfer_busy() {}
     }
 }
