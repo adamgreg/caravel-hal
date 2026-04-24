@@ -9,15 +9,15 @@ unsafe impl Send for Uart {}
 
 impl Uart {
     #[allow(clippy::new_without_default)]
-    pub fn new(enable: &UartEnabledOutRegister) -> Self {
-        let this = Self {
-            regs: UartRegisters::new(),
-        };
+    pub fn new() -> Self {
         // Enable the UART
+        let enable = UartEnabledOutRegister::new();
         unsafe {
             enable.value.write(1); // Enable bit
         }
-        this
+        Self {
+            regs: UartRegisters::new(),
+        }
     }
 
     /// Non-blocking check: returns true if data is available to read
