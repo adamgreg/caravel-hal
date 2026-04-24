@@ -1,6 +1,6 @@
 [package]
 name = "caravel-hal"
-version = "1.0.2"
+version = "1.0.3"
 description = "Hardware Abstraction Layer Crate for the Caravel management SoC."
 keywords = ["riscv", "caravel", "caravan", "chipignite", "chipfoundry"]
 repository = "https://github.com/adamgreg/caravel-hal"
