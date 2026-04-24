@@ -9,6 +9,6 @@ mod user_io;
 pub use gpio::Gpio;
 pub use timer::Timer0;
 pub use uart::Uart;
-pub use user_io::UserIo;
+pub use user_io::{UserIOBits, UserIo};
 
-pub use interrupts::enable_caravel_interrupts;
+pub use interrupts::{CaravelInterrupt, enable_caravel_interrupts};

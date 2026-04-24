@@ -1,3 +1,6 @@
+// Re-export CaravelInterrupt for ease-of-use
+pub use caravel_pac::CaravelInterrupt;
+
 /// Default interrupt dispatcher for Caravel external interrupts
 pub fn default_handle_machine_external_interrupt() {
     unsafe extern "C" {
