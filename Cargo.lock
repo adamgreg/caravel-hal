@@ -21,7 +21,7 @@ dependencies = [
 
 [[package]]
 name = "caravel-hal"
-version = "1.0.4"
+version = "1.0.5"
 dependencies = [
  "anyhow",
  "bitfield-struct",
@@ -36,9 +36,9 @@ dependencies = [
 
 [[package]]
 name = "caravel-pac"
-version = "1.0.4"
+version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "339708fd1214f45cd0f9a60c3defc9659f104d468ece100fab337ffd9f968671"
+checksum = "a9c5bd4afe5b4e284dded67f12628176f3fa196ef285067e8cd39667aa818787"
 dependencies = [
  "bitfield-struct",
  "caravel-pac-macros",
@@ -52,9 +52,9 @@ dependencies = [
 
 [[package]]
 name = "caravel-pac-macros"
-version = "1.0.2"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da9b70e3b8f59d1db4bd51fc65fbf69b6d4ddd571f9b052f9ccc5f62db90cfc9"
+checksum = "74ee2bba8198ca7dc8adb112ddce7ba181f011938697e028bcae4886b154259d"
 
 [[package]]
 name = "critical-section"
