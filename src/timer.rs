@@ -36,6 +36,7 @@ impl Timer0 {
     }
 
     /// Disable the Timer0 interrupt source
+    #[cfg(feature = "interrupts")]
     #[inline(always)]
     pub fn disable_interrupt(&mut self) {
         unsafe {
