@@ -25,6 +25,7 @@ impl Timer0 {
 
     /// Enable the Timer0 interrupt source
     /// Define the ISR using the `riscv_rt::external_interrupt` attribute
+    #[cfg(feature = "interrupts")]
     #[inline(always)]
     pub fn enable_interrupt(&mut self) {
         unsafe {

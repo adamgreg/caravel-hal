@@ -13,7 +13,6 @@ pub fn enable_caravel_interrupts() {
 }
 
 /// Register external interrupt dispatcher
-#[cfg(feature = "interrupts")]
 #[riscv_rt::core_interrupt(riscv::interrupt::Interrupt::MachineExternal)]
 fn _handle_machine_external_interrupt() {
     unsafe extern "C" {
