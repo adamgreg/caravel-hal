@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.7](https://github.com/adamgreg/caravel-hal/compare/v1.0.6...v1.0.7) - 2026-04-28
+
+### Other
+
+- Gate more dependencies behind the "interrupts" feature
+
 ## [1.0.6](https://github.com/adamgreg/caravel-hal/compare/v1.0.5...v1.0.6) - 2026-04-28
 
 ### Other
