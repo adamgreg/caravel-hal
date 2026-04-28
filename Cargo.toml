@@ -11,19 +11,19 @@ edition = "2024"
 [dependencies]
 anyhow = { version = "^1.0.0", default-features = false }
 bitfield-struct = "^0.12.1"
-caravel-pac = "^1.0.5"
+caravel-pac = "^1.0.6"
 critical-section = "^1.2.0"
 embedded-hal = "^1.0.0"
 embedded-io = "^0.6.1"
 riscv = { version = "^0.15.0", features = ["critical-section-single-hart"] }
-riscv-rt = { version = "^0.16.0", features = ["single-hart"] }
+riscv-rt = { version = "^0.16.0", features = ["single-hart", "device"], optional = true }
 vexriscv = "^0.0.3"
 
 [dev-dependencies]
 caravel-pac = { version = "^1.0.4", features = ["mock-registers"] }
 
 [features]
-default = ["riscv-rt/device"]
+default = ["interrupts"]
+interrupts = ["dep:riscv-rt", "caravel-pac/interrupts"]
 mock-registers = ["caravel-pac/mock-registers"]
 mock-user-registers = ["caravel-pac/mock-user-registers"]
-no-interrupts = []

@@ -1,6 +1,9 @@
 # caravel-hal
 
-A Hardware Abstraction Layer (HAL) for the [Caravel](https://github.com/chipfoundry/caravel) & [Caravan](https://github.com/chipfoundry/caravan) ChipIgnite management SoCs from [ChipFoundry](https://chipfoundry.io/)
+A Hardware Abstraction Layer (HAL) for the
+[Caravel](https://github.com/chipfoundry/caravel) &
+[Caravan](https://github.com/chipfoundry/caravan) ChipIgnite management SoCs
+from [ChipFoundry](https://chipfoundry.io/)
 
 This crate provides safe, idiomatic Rust interfaces for interacting with
 Caravel's hardware peripherals, including GPIO, UART, timers, interrupts, and
@@ -28,7 +31,8 @@ dispatches to user-defined handlers implemented using the
 [riscv_rt::external_interrupt](https://docs.rs/riscv-rt/latest/riscv_rt/attr.external_interrupt.html)
 attribute.
 
-This behaviour can be disabled by enabling the `no-interrupts` feature.
+This behaviour can be disabled by disabling the default the `interrupts`
+feature.
 
 > [!IMPORTANT]
 > "FAT" link-time optimisation breaks the interrupt dispatch. Set
