@@ -2,7 +2,7 @@
 
 mod gpio;
 mod housekeeping_spi;
-mod timer;
+mod timer0;
 mod uart;
 mod user_io;
 
@@ -14,7 +14,7 @@ pub use caravel_pac::user_register_block;
 
 pub use gpio::Gpio;
 pub use housekeeping_spi::HousekeepingSpi;
-pub use timer::Timer0;
+pub use timer0::Timer0;
 pub use uart::Uart;
 pub use user_io::{UserIOBits, UserIo};
 
