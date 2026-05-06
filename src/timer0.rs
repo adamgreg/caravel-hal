@@ -14,7 +14,6 @@ impl Timer0 {
     /// Constructs the Timer0 driver.
     /// `ticks_per_s` should be the clock speed of the core, in Hertz
     #[inline]
-    #[allow(clippy::new_without_default)]
     pub const fn new(ticks_per_s: u32) -> Self {
         // Precompute fixed-point conversion factor
         Self {
