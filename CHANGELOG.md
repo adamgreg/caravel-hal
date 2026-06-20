@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0](https://github.com/adamgreg/caravel-hal/compare/v1.0.10...v1.1.0) - 2026-06-20
+
+### Added
+
+- Add Wishobone driver (enable/disable)
+
 ## [1.0.10](https://github.com/adamgreg/caravel-hal/compare/v1.0.9...v1.0.10) - 2026-05-06
 
 ### Other
