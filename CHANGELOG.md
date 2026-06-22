@@ -3,15 +3,26 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and this project adheres to
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
 ## [2.0.0](https://github.com/adamgreg/caravel-hal/compare/v1.1.0...v2.0.0) - 2026-06-22
 
+### Breaking Changes
+
+- `register_block` and `user_register_block` macros now require named arguments
+  for base address / offset. `base` for `register_block`, and `offset` for
+  `user_register_block` (relative to user area - 0x3000_0000)
+
+### Added
+
+- Add optional `stride` named argument to register block macros.
+
 ### Other
 
-- [**breaking**] Bump caravel-pac dependency to v2
+Bump caravel-pac dependency to v2.
 
 ## [1.1.0](https://github.com/adamgreg/caravel-hal/compare/v1.0.10...v1.1.0) - 2026-06-20
 
