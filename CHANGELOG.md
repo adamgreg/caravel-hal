@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0](https://github.com/adamgreg/caravel-hal/compare/v1.1.0...v2.0.0) - 2026-06-22
+
+### Other
+
+- [**breaking**] Bump caravel-pac dependency to v2
+
 ## [1.1.0](https://github.com/adamgreg/caravel-hal/compare/v1.0.10...v1.1.0) - 2026-06-20
 
 ### Added
